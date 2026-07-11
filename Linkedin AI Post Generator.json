@@ -1,0 +1,252 @@
+{
+  "name": "Linkedin AI Post Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Post Creator",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Post Topic",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Target Audience",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9d89522e-15f9-4c37-80cd-40c0898aa145",
+      "name": "On form submission",
+      "webhookId": "2f91ef5c-9a83-4871-b2f1-4d4ac6379861"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Topic of Research:{{ $json['Post Topic'] }}\n Target Audience: {{ $json['Target Audience'] }}",
+        "options": {
+          "systemMessage": "You are a LinkedIn post writer for an AI automation developer based in Pakistan.\nWrite a compelling personal story post about the topic the user gives you.\nRules:\n• Hook in line 1 — no fluff, no \"I'm excited to share\"\n• 150–220 words, short punchy paragraphs, 1–2 sentences each\n• End with a question or call-to-action\n• Add 3–5 relevant hashtags on the last line"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2b189215-0252-4850-980a-229d36f03973",
+      "name": "Research Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        480,
+        256
+      ],
+      "id": "7ea579ef-5c7b-47f0-a7a2-145c269c12e1",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "hMPUkRvjtbGr5Jf5",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Linkedin post:{{ $json.output }}",
+        "options": {
+          "systemMessage": "You are an expert AI visual designer specializing in LinkedIn content.\n\nYour task is to analyze the provided LinkedIn post and generate a detailed image prompt that can be used by an AI image generation model.\n\nInstructions:\n- Read and understand the complete LinkedIn post.\n- Identify the main topic, key message, and target audience.\n- Create a single, highly descriptive image prompt.\n- Design images suitable for LinkedIn (professional, modern, minimal, clean).\n- Use flat illustrations, 3D illustrations, or realistic digital artwork depending on the topic.\n- Avoid adding long paragraphs of text inside the image.\n- If text is necessary, limit it to a short title (3–6 words).\n- Use a color palette of blue, white, black, and accent colors unless another palette better suits the topic.\n- Make the image visually engaging and easy to understand.\n- Include relevant icons, UI elements, charts, AI graphics, automation workflows, coding elements, business people, or devices whenever appropriate.\n- Never include watermarks, logos, or copyrighted branding unless explicitly requested.\n- The image should be optimized for a LinkedIn post with a 1:1 aspect ratio.\n- Return only the final image prompt and nothing else.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        560,
+        0
+      ],
+      "id": "db7fd22e-a689-4cfc-8783-1586046d0af1",
+      "name": "AI Image Generator Agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer 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"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"{{ $json['Post Topic'] }}\",\n  \"auto_parameters\": false,\n  \"topic\": \"general\",\n  \"search_depth\": \"basic\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 1,\n  \"time_range\": null,\n  \"start_date\": \"2025-02-09\",\n  \"end_date\": \"2025-12-29\",\n  \"include_answer\": false,\n  \"include_raw_content\": false,\n  \"include_images\": false,\n  \"include_image_descriptions\": false,\n  \"include_favicon\": false,\n  \"include_domains\": [],\n  \"exclude_domains\": [],\n  \"country\": null,\n  \"include_usage\": false\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.4,
+      "position": [
+        368,
+        208
+      ],
+      "id": "ccf9d063-7f4a-4e58-8eab-1800caae06db",
+      "name": "Tavily"
+    },
+    {
+      "parameters": {
+        "url": "=https://image.pollinations.ai/prompt",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{ $json.output }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        912,
+        32
+      ],
+      "id": "eb4d2fb6-896e-4f7e-a154-a7b2449dbdef",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "sendTo": "engineermalaikarajput@gmail.com",
+        "subject": "=={{ \"LinkedIn Post Approval - \" + $('On form submission').item.json['Post Topic'] }}",
+        "message": "=<h2>LinkedIn Post Approval</h2>  <p><strong>Topic:</strong></p>  <p>{{ $('On form submission').item.json['Post Topic'] }}</p>  <hr>  <p><strong>Generated LinkedIn Post:</strong></p>  <pre>{{ $('Research Agent').item.json.output }}</pre>  <hr>  <p><strong>Image Prompt:</strong></p>  <pre>{{ $('AI Image Generator Agent').item.json.output }}</pre> <hr>  <p>Please review this content and publish it manually on LinkedIn if approved.</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        32
+      ],
+      "id": "2825b3e8-fb31-441c-9600-28df3ddf582e",
+      "name": "Send a message",
+      "webhookId": "ca1c69a4-bf0d-46fa-8183-4242dc95fd8c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "BIeycE6fCNGm5FxZ",
+          "name": "Gmail account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Agent": {
+      "main": [
+        [
+          {
+            "node": "AI Image Generator Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Image Generator Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Image Generator Agent": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "Research Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "59438eab-18e5-47f6-9ae7-d96cd8b89cd8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "45cfcca183e6c8929d591a5125441d6e9830c8b39ae14ceea377e54e6361f741"
+  },
+  "id": "Ecnfyf2Qv8yt5z4q",
+  "tags": []
+}
