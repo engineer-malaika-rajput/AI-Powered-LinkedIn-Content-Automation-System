@@ -26,9 +26,9 @@
         0,
         0
       ],
-      "id": "9d89522e-15f9-4c37-80cd-40c0898aa145",
+      "id": "9d89522e-15f9-4c37-80cd---",
       "name": "On form submission",
-      "webhookId": "2f91ef5c-9a83-4871-b2f1-4d4ac6379861"
+      "webhookId": "2f91ef5c-9a83-4871-b-----"
     },
     {
       "parameters": {
@@ -44,7 +44,7 @@
         208,
         0
       ],
-      "id": "2b189215-0252-4850-980a-229d36f03973",
+      "id": "2b189215-0252-4850-98-----",
       "name": "Research Agent"
     },
     {
@@ -57,11 +57,11 @@
         480,
         256
       ],
-      "id": "7ea579ef-5c7b-47f0-a7a2-145c269c12e1",
+      "id": "7ea579ef-5c7b-47f0-----",
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "hMPUkRvjtbGr5Jf5",
+          "id": "hMPUkRvjtbG---",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -80,7 +80,7 @@
         560,
         0
       ],
-      "id": "db7fd22e-a689-4cfc-8783-1586046d0af1",
+      "id": "db7fd22e-a689-4cf-----",
       "name": "AI Image Generator Agent"
     },
     {
@@ -92,7 +92,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer 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"
+              "value": "Bearer your-token"
             }
           ]
         },
@@ -107,7 +107,7 @@
         368,
         208
       ],
-      "id": "ccf9d063-7f4a-4e58-8eab-1800caae06db",
+      "id": "ccf9d063-7f4a-4e58-8e-----",
       "name": "Tavily"
     },
     {
@@ -136,12 +136,12 @@
         912,
         32
       ],
-      "id": "eb4d2fb6-896e-4f7e-a154-a7b2449dbdef",
+      "id": "eb4d2fb6-896e-4f7e-a154------",
       "name": "HTTP Request"
     },
     {
       "parameters": {
-        "sendTo": "engineermalaikarajput@gmail.com",
+        "sendTo": "admin@gmail.com",
         "subject": "=={{ \"LinkedIn Post Approval - \" + $('On form submission').item.json['Post Topic'] }}",
         "message": "=<h2>LinkedIn Post Approval</h2>  <p><strong>Topic:</strong></p>  <p>{{ $('On form submission').item.json['Post Topic'] }}</p>  <hr>  <p><strong>Generated LinkedIn Post:</strong></p>  <pre>{{ $('Research Agent').item.json.output }}</pre>  <hr>  <p><strong>Image Prompt:</strong></p>  <pre>{{ $('AI Image Generator Agent').item.json.output }}</pre> <hr>  <p>Please review this content and publish it manually on LinkedIn if approved.</p>",
         "options": {}
@@ -152,13 +152,13 @@
         1120,
         32
       ],
-      "id": "2825b3e8-fb31-441c-9600-28df3ddf582e",
+      "id": "2825b3e8-fb31-441c-9-----",
       "name": "Send a message",
-      "webhookId": "ca1c69a4-bf0d-46fa-8183-4242dc95fd8c",
+      "webhookId": "ca1c69a4-bf0d-46----",
       "credentials": {
         "gmailOAuth2": {
-          "id": "BIeycE6fCNGm5FxZ",
-          "name": "Gmail account 2"
+          "id": "BIeycE6fC----",
+          "name": "Gmail account "
         }
       }
     }
@@ -242,11 +242,11 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "59438eab-18e5-47f6-9ae7-d96cd8b89cd8",
+  "versionId": "59438eab-18e5-47f6------",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "45cfcca183e6c8929d591a5125441d6e9830c8b39ae14ceea377e54e6361f741"
+    "instanceId": "45cfcca183e6c8929d591a5125------------"
   },
-  "id": "Ecnfyf2Qv8yt5z4q",
+  "id": "Ecnfyf2Qv8------",
   "tags": []
 }
